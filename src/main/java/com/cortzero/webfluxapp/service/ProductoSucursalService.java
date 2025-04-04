@@ -6,6 +6,7 @@ import com.cortzero.webfluxapp.repository.ProductoSucursalRepository;
 import com.cortzero.webfluxapp.repository.SucursalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -66,6 +67,10 @@ public class ProductoSucursalService {
                         )
                 )
         );
+    }
+
+    public Flux<ProductoSucursal> getAllProductsInSucursal(long sucursalId) {
+        return productoSucursalRepository.findBySucursalId(sucursalId);
     }
 
 }

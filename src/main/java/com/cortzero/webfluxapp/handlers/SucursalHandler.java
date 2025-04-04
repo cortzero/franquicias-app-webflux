@@ -23,4 +23,11 @@ public class SucursalHandler {
                 .body(sucursalService.create(sucursal), Sucursal.class));
     }
 
+    public Mono<ServerResponse> getAll(ServerRequest request) {
+        return ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(sucursalService.getAllSucursales(), Sucursal.class);
+    }
+
 }

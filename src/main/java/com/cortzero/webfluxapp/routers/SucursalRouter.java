@@ -15,6 +15,7 @@ public class SucursalRouter {
     @Bean
     public RouterFunction<ServerResponse> sucursalRoute(SucursalHandler handler) {
         return RouterFunctions.route()
+                .GET(PATH, handler::getAll)
                 .POST(PATH, handler::createSucursal)
                 .build();
     }

@@ -37,4 +37,8 @@ public class FranquiciaService {
                 );
     }
 
+    public Flux<Franquicia> getAllFranquicias() {
+        return franquiciaRepository.findAll();
+    }
+
 }

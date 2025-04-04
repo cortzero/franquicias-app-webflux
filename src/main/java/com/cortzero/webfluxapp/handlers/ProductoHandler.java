@@ -23,4 +23,11 @@ public class ProductoHandler {
                 .body(productoService.create(producto), Producto.class));
     }
 
+    public Mono<ServerResponse> getAll(ServerRequest request) {
+        return ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productoService.getAllProductos(), Producto.class);
+    }
+
 }

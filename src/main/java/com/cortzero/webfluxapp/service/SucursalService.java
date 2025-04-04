@@ -5,6 +5,7 @@ import com.cortzero.webfluxapp.repository.FranquiciaRepository;
 import com.cortzero.webfluxapp.repository.SucursalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -25,6 +26,10 @@ public class SucursalService {
                                         sucursalRepository.save(sucursal)
                                         : Mono.error(() -> new RuntimeException("No se encontró la franquicia"))
                 ));
+    }
+
+    public Flux<Sucursal> getAllSucursales() {
+        return sucursalRepository.findAll();
     }
 
 }

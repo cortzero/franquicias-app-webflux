@@ -49,4 +49,12 @@ public class ProductoSucursalHandler {
         });
     }
 
+    public Mono<ServerResponse> getAll(ServerRequest request) {
+        long sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
+        return ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productoSucursalService.getAllProductsInSucursal(sucursalId), ProductoSucursal.class);
+    }
+
 }

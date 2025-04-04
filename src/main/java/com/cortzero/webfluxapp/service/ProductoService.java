@@ -4,6 +4,7 @@ import com.cortzero.webfluxapp.model.Producto;
 import com.cortzero.webfluxapp.repository.ProductoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -18,6 +19,10 @@ public class ProductoService {
                 existsProducto -> existsProducto ?
                         Mono.error(() -> new RuntimeException("El producto ya está registrado"))
                         : productoRepository.save(producto));
+    }
+
+    public Flux<Producto> getAllProductos() {
+        return productoRepository.findAll();
     }
 
 }

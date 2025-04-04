@@ -15,6 +15,7 @@ public class ProductoRouter {
     @Bean
     public RouterFunction<ServerResponse> routeProducto(ProductoHandler handler) {
         return RouterFunctions.route()
+                .GET(PATH, handler::getAll)
                 .POST(PATH, handler::createProducto)
                 .build();
     }
