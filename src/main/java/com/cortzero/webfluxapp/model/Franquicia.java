@@ -20,7 +20,6 @@ public class Franquicia {
     @Id
     private long id;
     private String nombre;
-    //private Set<Sucursal> sucursales;
 
     @Override
     public boolean equals(Object o) {
@@ -39,7 +38,6 @@ public class Franquicia {
         return "Franquicia{" +
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
-                //", sucursales=" + sucursales +
                 '}';
     }
 
