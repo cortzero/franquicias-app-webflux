@@ -23,4 +23,15 @@ public class FranquiciaHandler {
                 .body(franquiciaService.create(franquicia), Franquicia.class));
     }
 
+    public Mono<ServerResponse> getMaxStockProductosPerSucursal(ServerRequest request) {
+        long franquiciaId = Long.parseLong(request.pathVariable("franquiciaId"));
+        return franquiciaService.getMaxStockProductosPerSucursal(franquiciaId)
+                .collectList()
+                .flatMap(list -> ServerResponse
+                        .ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(list)
+                );
+    }
+
 }

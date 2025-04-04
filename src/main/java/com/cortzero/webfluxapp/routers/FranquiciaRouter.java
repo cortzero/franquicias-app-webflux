@@ -15,6 +15,7 @@ public class FranquiciaRouter {
     @Bean
     public RouterFunction<ServerResponse> franquiciaRoute(FranquiciaHandler handler) {
         return RouterFunctions.route()
+                .GET(PATH + "/{franquiciaId}/sucursales/max-stock-products", handler::getMaxStockProductosPerSucursal)
                 .POST(PATH, handler::createFranquicia)
                 .build();
     }

@@ -4,6 +4,7 @@ import com.cortzero.webfluxapp.model.ProductoSucursal;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -16,5 +17,7 @@ public interface ProductoSucursalRepository extends ReactiveCrudRepository<Produ
 
     @Query("UPDATE producto_sucursal SET stock = :newStockAmount WHERE producto_id = :productoId AND sucursal_id = :sucursalId")
     Mono<Void> changeStock(long productoId, long sucursalId, int newStockAmount);
+
+    Flux<ProductoSucursal> findBySucursalId(long sucursalId);
 
 }
