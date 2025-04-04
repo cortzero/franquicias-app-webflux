@@ -15,10 +15,16 @@ CREATE TABLE IF NOT EXISTS sucursales (
 
 CREATE TABLE IF NOT EXISTS productos (
 	id INT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(100) NOT NULL,
-    stock INT NOT NULL,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS producto_sucursal (
+    id INT NOT NULL AUTO_INCREMENT,
+    producto_id INT NOT NULL,
     sucursal_id INT NOT NULL,
+    stock INT NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
-    FOREIGN KEY (sucursal_id) REFERENCES sucursales(id)
-    ON DELETE CASCADE
+    FOREIGN KEY (producto_id) REFERENCES productos(id) ON DELETE CASCADE,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursales(id) ON DELETE CASCADE
 );

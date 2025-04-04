@@ -16,7 +16,6 @@ public class Producto {
     @Id
     private long id;
     private String nombre;
-    private int stock;
 
     @Override
     public boolean equals(Object o) {
@@ -35,7 +34,6 @@ public class Producto {
         return "Producto{" +
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
-                ", stock=" + stock +
                 '}';
     }
 
