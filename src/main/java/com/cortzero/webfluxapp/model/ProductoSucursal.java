@@ -16,7 +16,7 @@ public class ProductoSucursal {
 
     @Id
     private long id;
-    private long productId;
+    private long productoId;
     private long sucursalId;
     private int stock;
 
@@ -24,7 +24,7 @@ public class ProductoSucursal {
     public String toString() {
         return "ProductoSucursal{" +
                 "id=" + id +
-                ", productId=" + productId +
+                ", productoId=" + productoId +
                 ", sucursalId=" + sucursalId +
                 ", stock=" + stock +
                 '}';

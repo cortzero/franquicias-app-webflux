@@ -16,11 +16,11 @@ public class FranquiciaHandler {
     private final FranquiciaService franquiciaService;
 
     public Mono<ServerResponse> createFranquicia(ServerRequest request) {
-        Mono<Franquicia> franquicia = request.bodyToMono(Franquicia.class);
-        return franquicia.flatMap(f -> ServerResponse
+        Mono<Franquicia> franquiciaMono = request.bodyToMono(Franquicia.class);
+        return franquiciaMono.flatMap(franquicia -> ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(franquiciaService.create(f), Franquicia.class));
+                .body(franquiciaService.create(franquicia), Franquicia.class));
     }
 
 }
