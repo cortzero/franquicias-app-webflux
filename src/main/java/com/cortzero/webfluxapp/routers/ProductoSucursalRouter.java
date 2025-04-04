@@ -15,7 +15,8 @@ public class ProductoSucursalRouter {
     @Bean
     public RouterFunction<ServerResponse> routeProductoSucursal(ProductoSucursalHandler handler) {
         return RouterFunctions.route()
-                .POST(PATH, handler::addProductToSucursal)
+                .POST(PATH, handler::addProductoToSucursal)
+                .DELETE(PATH + "/{productoId}", handler::removeProductoFromSucursal)
                 .build();
     }
 

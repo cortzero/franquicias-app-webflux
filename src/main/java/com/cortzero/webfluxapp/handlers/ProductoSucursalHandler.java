@@ -15,7 +15,7 @@ public class ProductoSucursalHandler {
 
     private final ProductoSucursalService productoSucursalService;
 
-    public Mono<ServerResponse> addProductToSucursal(ServerRequest request) {
+    public Mono<ServerResponse> addProductoToSucursal(ServerRequest request) {
         long sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
         Mono<ProductoSucursal> productoSucursalMono = request.bodyToMono(ProductoSucursal.class);
         return productoSucursalMono.flatMap(productoSucursal -> {
@@ -25,6 +25,15 @@ public class ProductoSucursalHandler {
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(productoSucursalService.addProductToSucursal(productoSucursal), ProductoSucursal.class);
         });
+    }
+
+    public Mono<ServerResponse> removeProductoFromSucursal(ServerRequest request) {
+        long productoId = Long.parseLong(request.pathVariable("productoId"));
+        long sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
+        return ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productoSucursalService.removeProductoFromSucursal(productoId, sucursalId), Void.class);
     }
 
 }
