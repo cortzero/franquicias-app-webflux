@@ -13,7 +13,11 @@ public class FranquiciaService {
     private final FranquiciaRepository franquiciaRepository;
 
     public Mono<Franquicia> create(Franquicia franquicia) {
-        return franquiciaRepository.save(franquicia);
+        Mono<Boolean> franquiciaExists = franquiciaRepository.findByNombre(franquicia.getNombre()).hasElement();
+        return franquiciaExists.flatMap(
+                exists -> exists ?
+                        Mono.error(() -> new RuntimeException("La franquicia ya existe"))
+                        : franquiciaRepository.save(franquicia));
     }
 
 }

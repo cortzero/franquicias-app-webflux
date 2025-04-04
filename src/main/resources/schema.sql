@@ -1,12 +1,12 @@
 CREATE TABLE IF NOT EXISTS franquicias (
 	id INT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(100) NOT NULL,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS sucursales (
 	id INT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(100) NOT NULL,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
     franquicia_id INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (franquicia_id) REFERENCES franquicias(id)

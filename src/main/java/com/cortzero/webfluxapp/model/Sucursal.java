@@ -7,7 +7,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.util.Objects;
 import java.util.Set;
 
-@Table
+@Table("sucursales")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -17,7 +17,7 @@ public class Sucursal {
     @Id
     private long id;
     private String nombre;
-    private Set<Producto> productos;
+    private long franquiciaId;
 
     @Override
     public boolean equals(Object o) {
@@ -36,7 +36,7 @@ public class Sucursal {
         return "Sucursal{" +
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
-                ", productos=" + productos +
+                ", franquiciaId=" + franquiciaId +
                 '}';
     }
 
