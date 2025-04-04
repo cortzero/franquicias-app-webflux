@@ -14,4 +14,7 @@ public interface ProductoSucursalRepository extends ReactiveCrudRepository<Produ
     @Query("DELETE FROM producto_sucursal WHERE producto_id = :productoId AND sucursal_id = :sucursalId")
     Mono<Void> deleteProductoFromSucursal(long productoId, long sucursalId);
 
+    @Query("UPDATE producto_sucursal SET stock = :newStockAmount WHERE producto_id = :productoId AND sucursal_id = :sucursalId")
+    Mono<Void> changeStock(long productoId, long sucursalId, int newStockAmount);
+
 }

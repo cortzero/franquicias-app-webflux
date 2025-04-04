@@ -16,6 +16,7 @@ public class ProductoSucursalRouter {
     public RouterFunction<ServerResponse> routeProductoSucursal(ProductoSucursalHandler handler) {
         return RouterFunctions.route()
                 .POST(PATH, handler::addProductoToSucursal)
+                .PUT(PATH + "/{productoId}", handler::changeProductoStockInSucursal)
                 .DELETE(PATH + "/{productoId}", handler::removeProductoFromSucursal)
                 .build();
     }

@@ -36,4 +36,17 @@ public class ProductoSucursalHandler {
                 .body(productoSucursalService.removeProductoFromSucursal(productoId, sucursalId), Void.class);
     }
 
+    public Mono<ServerResponse> changeProductoStockInSucursal(ServerRequest request) {
+        long productoId = Long.parseLong(request.pathVariable("productoId"));
+        long sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
+        Mono<ProductoSucursal> productoSucursalMono = request.bodyToMono(ProductoSucursal.class);
+        return productoSucursalMono.flatMap(productoSucursal -> {
+            int newStockAmount = productoSucursal.getStock();
+            return ServerResponse
+                    .ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(productoSucursalService.changeProductoStock(productoId, sucursalId, newStockAmount), Void.class);
+        });
+    }
+
 }

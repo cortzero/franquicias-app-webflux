@@ -36,13 +36,34 @@ public class ProductoSucursalService {
                 productoNotExists -> !productoNotExists ?
                         Mono.error(() -> new RuntimeException("El producto no existe"))
                         : existingSucursalMono.flatMap(
-                                sucursalNotExists -> !sucursalNotExists ?
-                                        Mono.error(() -> new RuntimeException("La sucursal no existe"))
-                                        : existingProductoSucursalMono.flatMap(
-                                                productoNotInSucursal -> !productoNotInSucursal ?
-                                                        Mono.error(() -> new RuntimeException("El producto no está agregado a la sucursal"))
-                                                        : productoSucursalRepository.deleteProductoFromSucursal(productoId, sucursalId)
+                        sucursalNotExists -> !sucursalNotExists ?
+                                Mono.error(() -> new RuntimeException("La sucursal no existe"))
+                                : existingProductoSucursalMono.flatMap(
+                                productoNotInSucursal -> !productoNotInSucursal ?
+                                        Mono.error(() -> new RuntimeException("La sucursal no posee este producto"))
+                                        : productoSucursalRepository.deleteProductoFromSucursal(productoId, sucursalId)
                                 )
+                )
+        );
+    }
+
+    public Mono<Void> changeProductoStock(long productoId, long sucursalId, int newStockAmount) {
+        Mono<Boolean> existingProductoMono = productoRepository.findById(productoId).hasElement();
+        Mono<Boolean> existingSucursalMono = sucursalRepository.findById(sucursalId).hasElement();
+        Mono<Boolean> existingProductoSucursalMono = productoSucursalRepository
+                .findByProductoIdAndSucursalId(productoId, sucursalId)
+                .hasElement();
+        return existingProductoMono.flatMap(
+                productoNotExists -> !productoNotExists ?
+                        Mono.error(() -> new RuntimeException("El producto no existe"))
+                        : existingSucursalMono.flatMap(
+                        sucursalNotExists -> !sucursalNotExists ?
+                                Mono.error(() -> new RuntimeException("La sucursal no existe"))
+                                : existingProductoSucursalMono.flatMap(
+                                productoNotInSucursal -> !productoNotInSucursal ?
+                                        Mono.error(() -> new RuntimeException("La sucursal no posee este producto"))
+                                        : productoSucursalRepository.changeStock(productoId, sucursalId, newStockAmount)
+                        )
                 )
         );
     }
