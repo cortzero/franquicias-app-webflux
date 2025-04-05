@@ -43,10 +43,9 @@ public class ProductoSucursalHandler {
         } catch (NumberFormatException e) {
             return ServerResponse.badRequest().bodyValue("Formato incorrecto de la URL: " + e.getMessage());
         }
-        return ServerResponse
-                .ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(productoSucursalService.removeProductoFromSucursal(productoId, sucursalId), Void.class);
+        return productoSucursalService.removeProductoFromSucursal(productoId, sucursalId)
+                .then(ServerResponse.ok().build())
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));
     }
 
     public Mono<ServerResponse> changeProductoStockInSucursal(ServerRequest request) {
