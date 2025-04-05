@@ -1,0 +1,30 @@
+services:
+  db:
+    container_name: mysql_franquicias_db
+    image: mysql:latest
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_DATABASE=franquicias_db
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - franquicias-app-network
+
+  app:
+    container_name: franquicias_app
+    build: .
+    environment:
+      - DB_URL=r2dbc:mysql://db:3306/franquicias_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - franquicias-app-network
+
+networks:
+  franquicias-app-network:
