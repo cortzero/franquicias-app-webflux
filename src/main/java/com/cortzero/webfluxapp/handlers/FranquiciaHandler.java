@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -17,15 +16,22 @@ public class FranquiciaHandler {
     private final FranquiciaService franquiciaService;
 
     public Mono<ServerResponse> createFranquicia(ServerRequest request) {
-        Mono<Franquicia> franquiciaMono = request.bodyToMono(Franquicia.class);
-        return franquiciaMono.flatMap(franquicia -> ServerResponse
-                .ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(franquiciaService.create(franquicia), Franquicia.class));
+        return request.bodyToMono(Franquicia.class)
+                .flatMap(franquiciaService::create)
+                .flatMap(franquiciaCreated -> ServerResponse
+                    .ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(franquiciaCreated))
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));
     }
 
     public Mono<ServerResponse> updateFranquicia(ServerRequest request) {
-        long id = Long.parseLong(request.pathVariable("franquiciaId"));
+        long id;
+        try {
+            id = Long.parseLong(request.pathVariable("franquiciaId"));
+        } catch (NumberFormatException e) {
+            return ServerResponse.badRequest().bodyValue("Formato incorrecto de la URL: " + e.getMessage());
+        }
         return request.bodyToMono(Franquicia.class)
                 .flatMap(franquicia -> franquiciaService.update(id, franquicia))
                 .flatMap(updatedFranquicia -> ServerResponse
@@ -36,7 +42,12 @@ public class FranquiciaHandler {
     }
 
     public Mono<ServerResponse> getMaxStockProductosPerSucursal(ServerRequest request) {
-        long franquiciaId = Long.parseLong(request.pathVariable("franquiciaId"));
+        long franquiciaId;
+        try {
+            franquiciaId = Long.parseLong(request.pathVariable("franquiciaId"));
+        } catch (NumberFormatException e) {
+            return ServerResponse.badRequest().bodyValue("Formato incorrecto de la URL: " + e.getMessage());
+        }
         return franquiciaService.getMaxStockProductosPerSucursal(franquiciaId)
                 .collectList()
                 .flatMap(list -> ServerResponse

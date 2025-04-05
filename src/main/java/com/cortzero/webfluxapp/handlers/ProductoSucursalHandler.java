@@ -16,20 +16,33 @@ public class ProductoSucursalHandler {
     private final ProductoSucursalService productoSucursalService;
 
     public Mono<ServerResponse> addProductoToSucursal(ServerRequest request) {
-        long sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
-        Mono<ProductoSucursal> productoSucursalMono = request.bodyToMono(ProductoSucursal.class);
-        return productoSucursalMono.flatMap(productoSucursal -> {
-            productoSucursal.setSucursalId(sucursalId);
-            return ServerResponse
-                    .ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(productoSucursalService.addProductToSucursal(productoSucursal), ProductoSucursal.class);
-        });
+        long sucursalId;
+        try {
+            sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
+        } catch (NumberFormatException e) {
+            return ServerResponse.badRequest().bodyValue("Formato incorrecto de la URL: " + e.getMessage());
+        }
+        return request.bodyToMono(ProductoSucursal.class)
+                .flatMap(productoSucursal -> {
+                    productoSucursal.setSucursalId(sucursalId);
+                    return productoSucursalService.addProductToSucursal(productoSucursal);
+                })
+                .flatMap(productoSucursalCreated -> ServerResponse
+                        .ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(productoSucursalCreated))
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));
     }
 
     public Mono<ServerResponse> removeProductoFromSucursal(ServerRequest request) {
-        long productoId = Long.parseLong(request.pathVariable("productoId"));
-        long sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
+        long productoId;
+        long sucursalId;
+        try {
+            productoId = Long.parseLong(request.pathVariable("productoId"));
+            sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
+        } catch (NumberFormatException e) {
+            return ServerResponse.badRequest().bodyValue("Formato incorrecto de la URL: " + e.getMessage());
+        }
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -37,8 +50,14 @@ public class ProductoSucursalHandler {
     }
 
     public Mono<ServerResponse> changeProductoStockInSucursal(ServerRequest request) {
-        long productoId = Long.parseLong(request.pathVariable("productoId"));
-        long sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
+        long productoId;
+        long sucursalId;
+        try {
+            productoId = Long.parseLong(request.pathVariable("productoId"));
+            sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
+        } catch (NumberFormatException e) {
+            return ServerResponse.badRequest().bodyValue("Formato incorrecto de la URL: " + e.getMessage());
+        }
         Mono<ProductoSucursal> productoSucursalMono = request.bodyToMono(ProductoSucursal.class);
         return productoSucursalMono.flatMap(productoSucursal -> {
             int newStockAmount = productoSucursal.getStock();
@@ -50,7 +69,12 @@ public class ProductoSucursalHandler {
     }
 
     public Mono<ServerResponse> getAll(ServerRequest request) {
-        long sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
+        long sucursalId;
+        try {
+            sucursalId = Long.parseLong(request.pathVariable("sucursalId"));
+        } catch (NumberFormatException e) {
+            return ServerResponse.badRequest().bodyValue("Formato incorrecto de la URL: " + e.getMessage());
+        }
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)

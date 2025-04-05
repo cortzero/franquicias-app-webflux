@@ -17,14 +17,14 @@ public class SucursalService {
 
     public Mono<Sucursal> create(Sucursal sucursal) {
         Mono<Boolean> franquiciaExists = franquiciaRepository.findById(sucursal.getFranquiciaId()).hasElement();
-        Mono<Boolean> sucursalExists = sucursalRepository.findByNombre(sucursal.getNombre()).hasElement();
-        return sucursalExists.flatMap(
-                existSucursal -> existSucursal ?
-                        Mono.error(() -> new RuntimeException("La sucursal ya existe"))
+        return sucursalRepository.findByNombre(sucursal.getNombre())
+                .hasElement()
+                .flatMap(existSucursal -> existSucursal ?
+                        Mono.error(() -> new RuntimeException("La sucursal ya existe."))
                         : franquiciaExists.flatMap(
-                                existFranquicia -> existFranquicia ?
-                                        sucursalRepository.save(sucursal)
-                                        : Mono.error(() -> new RuntimeException("No se encontró la franquicia"))
+                        existFranquicia -> existFranquicia ?
+                                sucursalRepository.save(sucursal)
+                                : Mono.error(() -> new RuntimeException("No se encontró la franquicia."))
                 ));
     }
 

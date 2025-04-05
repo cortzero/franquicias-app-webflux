@@ -16,15 +16,22 @@ public class ProductoHandler {
     private final ProductoService productoService;
 
     public Mono<ServerResponse> createProducto(ServerRequest request) {
-        Mono<Producto> productoMono = request.bodyToMono(Producto.class);
-        return productoMono.flatMap(producto -> ServerResponse
-                .ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(productoService.create(producto), Producto.class));
+        return request.bodyToMono(Producto.class)
+                .flatMap(productoService::create)
+                .flatMap(createdProducto -> ServerResponse
+                    .ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(createdProducto))
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));
     }
 
     public Mono<ServerResponse> updateProducto(ServerRequest request) {
-        long id = Long.parseLong(request.pathVariable("productoId"));
+        long id;
+        try {
+            id = Long.parseLong(request.pathVariable("productoId"));
+        } catch (NumberFormatException e) {
+            return ServerResponse.badRequest().bodyValue("Formato incorrecto de la URL: " + e.getMessage());
+        }
         return request.bodyToMono(Producto.class)
                 .flatMap(producto -> productoService.update(id, producto))
                 .flatMap(updatedProducto -> ServerResponse

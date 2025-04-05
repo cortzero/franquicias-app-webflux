@@ -21,9 +21,9 @@ public class FranquiciaService {
     private final ProductoSucursalRepository productoSucursalRepository;
 
     public Mono<Franquicia> create(Franquicia franquicia) {
-        Mono<Boolean> franquiciaExists = franquiciaRepository.findByNombre(franquicia.getNombre()).hasElement();
-        return franquiciaExists.flatMap(
-                exists -> exists ?
+        return franquiciaRepository.findByNombre(franquicia.getNombre())
+                .hasElement()
+                .flatMap(exists -> exists ?
                         Mono.error(() -> new RuntimeException("La franquicia ya existe"))
                         : franquiciaRepository.save(franquicia));
     }

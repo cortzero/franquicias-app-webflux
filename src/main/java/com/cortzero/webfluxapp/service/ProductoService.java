@@ -14,9 +14,9 @@ public class ProductoService {
     private final ProductoRepository productoRepository;
 
     public Mono<Producto> create(Producto producto) {
-        Mono<Boolean> productoExists = productoRepository.findByNombre(producto.getNombre()).hasElement();
-        return productoExists.flatMap(
-                existsProducto -> existsProducto ?
+        return productoRepository.findByNombre(producto.getNombre())
+                .hasElement()
+                .flatMap(existsProducto -> existsProducto ?
                         Mono.error(() -> new RuntimeException("El producto ya está registrado"))
                         : productoRepository.save(producto));
     }

@@ -18,13 +18,26 @@ public class ProductoSucursalService {
     private final SucursalRepository sucursalRepository;
 
     public Mono<ProductoSucursal> addProductToSucursal(ProductoSucursal productoSucursal) {
+        long productoId = productoSucursal.getProductoId();
+        long sucursalId = productoSucursal.getSucursalId();
+        Mono<Boolean> existingProductoMono = productoRepository.findById(productoId).hasElement();
+        Mono<Boolean> existingSucursalMono = sucursalRepository.findById(sucursalId).hasElement();
         Mono<Boolean> existingProductoSucursalMono = productoSucursalRepository
-                .findByProductoIdAndSucursalId(productoSucursal.getProductoId(), productoSucursal.getSucursalId())
+                .findByProductoIdAndSucursalId(productoId, sucursalId)
                 .hasElement();
-        return existingProductoSucursalMono
-                .flatMap(exists -> exists ?
-                        Mono.error(() -> new RuntimeException("El producto ya está agregado a la sucursal"))
-                        : productoSucursalRepository.save(productoSucursal));
+        return existingProductoMono.flatMap(
+                productoNotExists -> !productoNotExists ?
+                        Mono.error(() -> new RuntimeException("El producto no existe"))
+                        : existingSucursalMono.flatMap(
+                        sucursalNotExists -> !sucursalNotExists ?
+                                Mono.error(() -> new RuntimeException("La sucursal no existe"))
+                                : existingProductoSucursalMono.flatMap(
+                                productoNotInSucursal -> productoNotInSucursal ?
+                                        Mono.error(() -> new RuntimeException("El producto ya está agregado a la sucursal"))
+                                        : productoSucursalRepository.save(productoSucursal)
+                                )
+                        )
+                );
     }
 
     public Mono<Void> removeProductoFromSucursal(long productoId, long sucursalId) {
@@ -44,8 +57,8 @@ public class ProductoSucursalService {
                                         Mono.error(() -> new RuntimeException("La sucursal no posee este producto"))
                                         : productoSucursalRepository.deleteProductoFromSucursal(productoId, sucursalId)
                                 )
-                )
-        );
+                        )
+                );
     }
 
     public Mono<Void> changeProductoStock(long productoId, long sucursalId, int newStockAmount) {

@@ -16,15 +16,22 @@ public class SucursalHandler {
     private final SucursalService sucursalService;
 
     public Mono<ServerResponse> createSucursal(ServerRequest request) {
-        Mono<Sucursal> sucursalMono = request.bodyToMono(Sucursal.class);
-        return sucursalMono.flatMap(sucursal -> ServerResponse
-                .ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(sucursalService.create(sucursal), Sucursal.class));
+        return request.bodyToMono(Sucursal.class)
+                .flatMap(sucursalService::create)
+                .flatMap(createdSucursal -> ServerResponse
+                        .ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(createdSucursal))
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));
     }
 
     public Mono<ServerResponse> update(ServerRequest request) {
-        long id = Long.parseLong(request.pathVariable("sucursalId"));
+        long id;
+        try {
+            id = Long.parseLong(request.pathVariable("sucursalId"));
+        } catch (NumberFormatException e) {
+            return ServerResponse.badRequest().bodyValue("Formato incorrecto de la URL: " + e.getMessage());
+        }
         return request.bodyToMono(Sucursal.class)
                 .flatMap(sucursal -> sucursalService.update(id, sucursal))
                 .flatMap(updatedSucursal -> ServerResponse
