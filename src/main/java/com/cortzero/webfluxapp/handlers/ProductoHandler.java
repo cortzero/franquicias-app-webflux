@@ -23,6 +23,17 @@ public class ProductoHandler {
                 .body(productoService.create(producto), Producto.class));
     }
 
+    public Mono<ServerResponse> updateProducto(ServerRequest request) {
+        long id = Long.parseLong(request.pathVariable("productoId"));
+        return request.bodyToMono(Producto.class)
+                .flatMap(producto -> productoService.update(id, producto))
+                .flatMap(updatedProducto -> ServerResponse
+                        .ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(updatedProducto))
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));
+    }
+
     public Mono<ServerResponse> getAll(ServerRequest request) {
         return ServerResponse
                 .ok()

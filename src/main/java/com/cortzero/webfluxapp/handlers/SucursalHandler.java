@@ -23,6 +23,17 @@ public class SucursalHandler {
                 .body(sucursalService.create(sucursal), Sucursal.class));
     }
 
+    public Mono<ServerResponse> update(ServerRequest request) {
+        long id = Long.parseLong(request.pathVariable("sucursalId"));
+        return request.bodyToMono(Sucursal.class)
+                .flatMap(sucursal -> sucursalService.update(id, sucursal))
+                .flatMap(updatedSucursal -> ServerResponse
+                        .ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(updatedSucursal))
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));
+    }
+
     public Mono<ServerResponse> getAll(ServerRequest request) {
         return ServerResponse
                 .ok()

@@ -21,6 +21,22 @@ public class ProductoService {
                         : productoRepository.save(producto));
     }
 
+    public Mono<Producto> update(long id, Producto producto) {
+        return productoRepository.findByNombre(producto.getNombre())
+                .hasElement()
+                .flatMap(isNameRepeated -> isNameRepeated ?
+                        Mono.error(() -> new RuntimeException(
+                                String.format("Ya existe un producto '%s'.", producto.getNombre())))
+                        : productoRepository.findById(id)
+                            .flatMap(existingProducto -> {
+                                existingProducto.setNombre(producto.getNombre());
+                                return productoRepository.save(existingProducto);
+                            })
+                            .switchIfEmpty(Mono.error(() -> new RuntimeException(
+                                    String.format("El producto con id '%d' no existe.", id))))
+                );
+    }
+
     public Flux<Producto> getAllProductos() {
         return productoRepository.findAll();
     }

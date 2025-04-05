@@ -24,6 +24,17 @@ public class FranquiciaHandler {
                 .body(franquiciaService.create(franquicia), Franquicia.class));
     }
 
+    public Mono<ServerResponse> updateFranquicia(ServerRequest request) {
+        long id = Long.parseLong(request.pathVariable("franquiciaId"));
+        return request.bodyToMono(Franquicia.class)
+                .flatMap(franquicia -> franquiciaService.update(id, franquicia))
+                .flatMap(updatedFranquicia -> ServerResponse
+                        .ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(updatedFranquicia))
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));
+    }
+
     public Mono<ServerResponse> getMaxStockProductosPerSucursal(ServerRequest request) {
         long franquiciaId = Long.parseLong(request.pathVariable("franquiciaId"));
         return franquiciaService.getMaxStockProductosPerSucursal(franquiciaId)

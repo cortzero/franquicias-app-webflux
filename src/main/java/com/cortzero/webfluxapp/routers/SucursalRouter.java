@@ -17,6 +17,7 @@ public class SucursalRouter {
         return RouterFunctions.route()
                 .GET(PATH, handler::getAll)
                 .POST(PATH, handler::createSucursal)
+                .PUT(PATH + "/{sucursalId}", handler::update)
                 .build();
     }
 

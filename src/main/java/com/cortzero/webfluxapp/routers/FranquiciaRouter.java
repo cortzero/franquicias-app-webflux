@@ -18,6 +18,7 @@ public class FranquiciaRouter {
                 .GET(PATH, handler::getAll)
                 .GET(PATH + "/{franquiciaId}/sucursales/max-stock-products", handler::getMaxStockProductosPerSucursal)
                 .POST(PATH, handler::createFranquicia)
+                .PUT(PATH + "/{franquiciaId}", handler::updateFranquicia)
                 .build();
     }
 

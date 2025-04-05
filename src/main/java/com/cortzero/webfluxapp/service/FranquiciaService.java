@@ -28,6 +28,22 @@ public class FranquiciaService {
                         : franquiciaRepository.save(franquicia));
     }
 
+    public Mono<Franquicia> update(long id, Franquicia franquicia) {
+        return franquiciaRepository.findByNombre(franquicia.getNombre())
+                .hasElement()
+                .flatMap(isNameRepeated -> isNameRepeated ?
+                        Mono.error(() -> new RuntimeException(String
+                                .format("El nombre '%s' ya está tomado por una franquicia.", franquicia.getNombre())))
+                        : franquiciaRepository.findById(id)
+                            .flatMap(existingFranquicia -> {
+                                existingFranquicia.setNombre(franquicia.getNombre());
+                                return franquiciaRepository.save(existingFranquicia);
+                            })
+                            .switchIfEmpty(Mono.error(() -> new RuntimeException(String
+                                    .format("La franquicia con id '%d' no existe.", id))))
+                );
+    }
+
     public Flux<ProductoSucursal> getMaxStockProductosPerSucursal(long franquiciaId) {
         return sucursalRepository.findByFranquiciaId(franquiciaId)
                 .flatMap(sucursal -> productoSucursalRepository

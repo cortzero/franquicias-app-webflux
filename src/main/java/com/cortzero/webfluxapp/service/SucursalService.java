@@ -28,6 +28,22 @@ public class SucursalService {
                 ));
     }
 
+    public Mono<Sucursal> update(long id, Sucursal sucursal) {
+        return sucursalRepository.findByNombre(sucursal.getNombre())
+                .hasElement()
+                .flatMap(isNameRepeated -> isNameRepeated ?
+                        Mono.error(() -> new RuntimeException(
+                                String.format("Ya existe una sucursal con nombre '%s'.", sucursal.getNombre())))
+                        : sucursalRepository.findById(id)
+                            .flatMap(existingSucursal -> {
+                                existingSucursal.setNombre(sucursal.getNombre());
+                                return sucursalRepository.save(existingSucursal);
+                            })
+                            .switchIfEmpty(Mono.error(() -> new RuntimeException(
+                                    String.format("La sucursal con id '%d' no existe.", id))))
+                );
+    }
+
     public Flux<Sucursal> getAllSucursales() {
         return sucursalRepository.findAll();
     }

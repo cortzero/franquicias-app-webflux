@@ -17,6 +17,7 @@ public class ProductoRouter {
         return RouterFunctions.route()
                 .GET(PATH, handler::getAll)
                 .POST(PATH, handler::createProducto)
+                .PUT(PATH + "/{productoId}", handler::updateProducto)
                 .build();
     }
 
