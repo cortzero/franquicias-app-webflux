@@ -9,6 +9,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+
 @Component
 @RequiredArgsConstructor
 public class ProductoHandler {
@@ -19,7 +21,7 @@ public class ProductoHandler {
         return request.bodyToMono(Producto.class)
                 .flatMap(productoService::create)
                 .flatMap(createdProducto -> ServerResponse
-                    .ok()
+                    .created(URI.create(request.path() + "/" + createdProducto.getId()))
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(createdProducto))
                 .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));

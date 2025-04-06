@@ -9,6 +9,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+
 @Component
 @RequiredArgsConstructor
 public class ProductoSucursalHandler {
@@ -28,7 +30,7 @@ public class ProductoSucursalHandler {
                     return productoSucursalService.addProductToSucursal(productoSucursal);
                 })
                 .flatMap(productoSucursalCreated -> ServerResponse
-                        .ok()
+                        .created(URI.create(request.path() + "/" + productoSucursalCreated.getProductoId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(productoSucursalCreated))
                 .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));

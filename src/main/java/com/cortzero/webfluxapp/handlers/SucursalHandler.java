@@ -9,6 +9,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+
 @Component
 @RequiredArgsConstructor
 public class SucursalHandler {
@@ -19,7 +21,7 @@ public class SucursalHandler {
         return request.bodyToMono(Sucursal.class)
                 .flatMap(sucursalService::create)
                 .flatMap(createdSucursal -> ServerResponse
-                        .ok()
+                        .created(URI.create(request.path() + "/" + createdSucursal.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(createdSucursal))
                 .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));

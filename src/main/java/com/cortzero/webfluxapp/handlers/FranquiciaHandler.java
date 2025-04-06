@@ -9,6 +9,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+
 @Component
 @RequiredArgsConstructor
 public class FranquiciaHandler {
@@ -19,7 +21,7 @@ public class FranquiciaHandler {
         return request.bodyToMono(Franquicia.class)
                 .flatMap(franquiciaService::create)
                 .flatMap(franquiciaCreated -> ServerResponse
-                    .ok()
+                    .created(URI.create(request.path() + "/" + franquiciaCreated.getId()))
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(franquiciaCreated))
                 .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));
