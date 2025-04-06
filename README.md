@@ -11,7 +11,13 @@ A continuación se explica las variables de entorno:
 - `DB_PASSWORD`: La contraseña del usuario de la base de datos.
 
 ## Ejecutar la aplicación
-Para ejecutar la aplicación se puede usar docker compose. En la carpeta raíz, ejecutar el siguiente comando:
+Para ejecutar la aplicación se puede usar docker compose. 
+
+Primero hay que crear el .jar ejecutando el siguiente comando maven:
+
+`.\mvnw.cmd clean install -DskipTests`
+
+Luego de que se haya creado el archivo .jar, en la carpeta raíz, ejecutar el siguiente comando:
 
 `docker compose up`
 
